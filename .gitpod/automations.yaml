@@ -8,33 +8,23 @@ tasks:
   appUrl:
     name: Mod App URL
     dependsOn: ["copyEnv"]
-    triggeredBy:
-      - postEnvironmentStart
     command: sed -i "s#APP_URL=http://localhost#APP_URL=$(gp url 8000)#g" .env
   viteUrl:
     name: Mod Vite URL
     dependsOn: ["copyEnv"]
-    triggeredBy:
-      - postEnvironmentStart
     command: sed -i "s#GITPOD_VITE_URL=#GITPOD_VITE_URL=$(gp url 5173)#g" .env
   composer:
     name: Install Dependencies
     dependsOn: ["copyEnv"]
     description: Installs deps via composer
-    triggeredBy:
-      - postEnvironmentStart
     command: composer install --ignore-platform-reqs
   createDatabase:
     name: Create Database
     dependsOn: ["copyEnv"]
-    triggeredBy:
-      - postEnvironmentStart
     command: touch database/database.sqlite
   phpOperations:
     name: Setup PHP and Run
-    dependsOn: ["copyEnv", "createDatabase", "viteUrl", "appUrl", "composer"]
-    triggeredBy:
-      - postEnvironmentStart
+    dependsOn: ["copyEnv"]
     command: |
       php artisan key:generate
       php artisan storage:link
