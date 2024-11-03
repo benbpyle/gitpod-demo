@@ -30,14 +30,14 @@ tasks:
     triggeredBy:
       - postEnvironmentStart
     command: touch database/database.sqlite
-  # phpOperations:
-  #   name: Setup PHP and Run
-  #   dependsOn: ["copyEnv", "createDatabase", "viteUrl", "appUrl", "composer"]
-  #   triggeredBy:
-  #     - postEnvironmentStart
-  #   command: |
-  #     php artisan key:generate
-  #     php artisan storage:link
-  #     php artisan migrate --seed
-  #     php artisan db:seed --class=TodoSeeder
-  #     php artisan serve
+  phpOperations:
+    name: Setup PHP and Run
+    dependsOn: ["copyEnv", "createDatabase", "viteUrl", "appUrl", "composer"]
+    triggeredBy:
+      - postEnvironmentStart
+    command: |
+      php artisan key:generate
+      php artisan storage:link
+      php artisan migrate --seed
+      php artisan db:seed --class=TodoSeeder
+      php artisan serve
