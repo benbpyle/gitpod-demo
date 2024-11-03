@@ -5,22 +5,39 @@ tasks:
     triggeredBy:
       - postEnvironmentStart
     command: cp .env.example .env
-
-  phpOperations:
-    name: Setup PHP and Run
+  appUrl:
+    name: Mod App URL
     dependsOn: ["copyEnv"]
     triggeredBy:
       - postEnvironmentStart
-    command: |
-      composer install --ignore-platform-reqs
-
-      sed -i "s#APP_URL=http://localhost#APP_URL=$(gp url 8000)#g" .env
-      sed -i "s#GITPOD_VITE_URL=#GITPOD_VITE_URL=$(gp url 5173)#g" .env
-
-      touch database/database.sqlite
-
-      php artisan key:generate
-      php artisan storage:link
-      php artisan migrate --seed
-      php artisan db:seed --class=TodoSeeder
-      php artisan serve
+    command: sed -i "s#APP_URL=http://localhost#APP_URL=$(gp url 8000)#g" .env
+  viteUrl:
+    name: Mod Vite URL
+    dependsOn: ["copyEnv"]
+    triggeredBy:
+      - postEnvironmentStart
+    command: sed -i "s#GITPOD_VITE_URL=#GITPOD_VITE_URL=$(gp url 5173)#g" .env
+  composer:
+    name: Install Dependencies
+    dependsOn: ["copyEnv"]
+    description: Installs deps via composer
+    triggeredBy:
+      - postEnvironmentStart
+    command: composer install --ignore-platform-reqs
+  createDatabase:
+    name: Create Database
+    dependsOn: ["copyEnv"]
+    triggeredBy:
+      - postEnvironmentStart
+    command: touch database/database.sqlite
+  # phpOperations:
+  #   name: Setup PHP and Run
+  #   dependsOn: ["copyEnv", "createDatabase", "viteUrl", "appUrl", "composer"]
+  #   triggeredBy:
+  #     - postEnvironmentStart
+  #   command: |
+  #     php artisan key:generate
+  #     php artisan storage:link
+  #     php artisan migrate --seed
+  #     php artisan db:seed --class=TodoSeeder
+  #     php artisan serve
