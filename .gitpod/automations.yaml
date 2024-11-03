@@ -1,3 +1,10 @@
+services:
+  php:
+    name: Run PHP Serve
+    triggeredBy: ["postDevcontainerStart"]
+    commands:
+      start: php artisan serve
+
 tasks:
   copyEnv:
     name: Copy Environment
@@ -8,26 +15,35 @@ tasks:
   appUrl:
     name: Mod App URL
     dependsOn: ["copyEnv"]
+    triggeredBy:
+      - postEnvironmentStart
     command: sed -i "s#APP_URL=http://localhost#APP_URL=$(gp url 8000)#g" .env
   viteUrl:
     name: Mod Vite URL
     dependsOn: ["copyEnv"]
+    triggeredBy:
+      - postEnvironmentStart
     command: sed -i "s#GITPOD_VITE_URL=#GITPOD_VITE_URL=$(gp url 5173)#g" .env
   composer:
     name: Install Dependencies
     dependsOn: ["copyEnv"]
+    triggeredBy:
+      - postEnvironmentStart
     description: Installs deps via composer
     command: composer install --ignore-platform-reqs
   createDatabase:
     name: Create Database
+    triggeredBy:
+      - postEnvironmentStart
     dependsOn: ["copyEnv"]
     command: touch database/database.sqlite
   phpOperations:
     name: Setup PHP and Run
+    triggeredBy:
+      - postEnvironmentStart
     dependsOn: ["copyEnv"]
     command: |
       php artisan key:generate
       php artisan storage:link
       php artisan migrate --seed
       php artisan db:seed --class=TodoSeeder
-      php artisan serve
