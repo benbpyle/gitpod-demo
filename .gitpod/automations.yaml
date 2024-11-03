@@ -3,7 +3,7 @@ tasks:
     name: Initialize
     description: Init the environment
     triggeredBy:
-      - postDevcontainerStart
+      - postEnvironmentStart
     command: |
       cp .env.example .env &&
       # sed -i "s#APP_URL=http://localhost#APP_URL=$(gp url 8000)#g" .env
