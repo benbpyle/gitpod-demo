@@ -4,8 +4,14 @@ tasks:
     description: Creates the .env file
     triggeredBy:
       - postEnvironmentStart
+    command: cp .env.example .env
+  composer:
+    name: Install Dependencies
+    description: Installs deps via composer
+    triggeredBy:
+      - postEnvironmentStart
     command:
-      cp .env.example .env &&
+      composer install --ignore-platform-reqs
       # # sed -i "s#APP_URL=http://localhost#APP_URL=$(gp url 8000)#g" .env
       # # sed -i "s#GITPOD_VITE_URL=#GITPOD_VITE_URL=$(gp url 5173)#g" .env
       # touch database/database.sqlite
